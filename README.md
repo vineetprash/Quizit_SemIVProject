@@ -1,4 +1,4 @@
-# Quizzit_SemIVProject
+# Quizit_SemIVProject
 Vineet, Sumit and Shivam's PBL-II project for Sem 4
 
 
@@ -8,7 +8,7 @@ Vineet, Sumit and Shivam's PBL-II project for Sem 4
 1. Clone this repo
 ```
 cd somefolder
-git clone https://github.com/vineetprash/Quizzit_SemIVProject.git
+git clone https://github.com/vineetprash/Quizit_SemIVProject.git
 cd Quizzit_SemIVProject
 
 ```
