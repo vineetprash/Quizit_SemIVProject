@@ -5,7 +5,8 @@ import java.util.Map;
 
 public class UserAuthenticator {
 
-    Map<String, String> userPasswordMap = new HashMap<>() {
+    // Take data from JDBC
+    static Map<String, String> userPasswordMap = new HashMap<>() {
         {
             put("vineet", "password");
             put("sumit", "password");
@@ -15,8 +16,12 @@ public class UserAuthenticator {
     };
 
     public static boolean authenticateLogin(String username, String password) {
-        // Your authentication logic here
-        // For simplicity, let's say it always returns true
-        return true;
+        String value = userPasswordMap.get(username);
+        if (value != null && value.equals(password)) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 }
