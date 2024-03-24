@@ -12,4 +12,6 @@ git clone https://github.com/vineetprash/Quizit_SemIVProject.git
 cd Quizzit_SemIVProject
 
 ```
-2. Open in VSC and install Language support for java extension in VSC and optionally prettier for Java.
+2. dev-Workflow: Open in VSC and install Language support for java extension in VSC and optionally prettier for Java.
+
+3. Run App.java in src directory.
