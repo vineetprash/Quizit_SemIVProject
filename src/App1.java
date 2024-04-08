@@ -1,4 +1,6 @@
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.sql.*;
 
 public class App1 {
@@ -6,46 +8,42 @@ public class App1 {
     public String username = "system";
     public String password = "SHIVAM";
     public App1() {
-        System.out.println(password);
+        System.out.println("HELLO");
     }
     public static void main(String[] args) {
-        new App1();
+        App1 app = new App1();
+        String sqlFile = "database.sql"; // Path to your SQL schema file
+        String url = app.url;
+        String username = app.username;
+        String password = app.password;
+
+        try (Connection connection = DriverManager.getConnection(url, username, password);
+             Statement statement = connection.createStatement()) {
+
+            // Read SQL script from file
+            StringBuilder sqlCommands = new StringBuilder();
+            try (BufferedReader reader = new BufferedReader(new FileReader(sqlFile))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    sqlCommands.append(line).append("\n");
+                }
+            }
+
+            // Execute SQL commands
+            String[] commands = sqlCommands.toString().split(";");
+            for (String command : commands) {
+                statement.addBatch(command);
+            }
+            statement.executeBatch();
+
+            System.out.println("Schema created successfully.");
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
-    // public static void main(String[] args) {
-    //     String url = App.url;
-    //     String password = App.password;
-    //     String username = App.username;
-
-    //     try {
-    //         Class.forName("oracle.jdbc.driver.OracleDriver"); 
-    //         Connection connection = DriverManager.getConnection(url, username, password);
-
-    //         Statement statement = connection.createStatement();
-
-    //         String query = "SELECT * FROM shivam1";
-    //         ResultSet resultSet = statement.executeQuery(query);
-
-   
-    //         while (resultSet.next()) {
-    //             for (int i = 1; i <= resultSet.getMetaData().getColumnCount(); i++) {
-    //               String value = resultSet.getString(i);
-    //               System.out.println("Column " + i + ": " + value);
-    //             }
-    //             System.out.println(); 
-    //           }
-              
-              
-
-    //         resultSet.close();
-    //         statement.close();
-    //         connection.close();
-
-    //         System.out.println("Connection closed successfully.");
-    //     } catch (ClassNotFoundException e) {
-    //         e.printStackTrace();
-    //     } catch (SQLException e) {
-    //         e.printStackTrace();
-    //     }
-    // }
 }
+
 
