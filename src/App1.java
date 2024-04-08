@@ -1,17 +1,17 @@
-package backend;
+
 import java.sql.*;
 
-public class App {
+public class App1 {
     public String url = "jdbc:oracle:thin:@LAPTOP-EK807I1M:1521:xe";
     public String username = "system";
     public String password = "SHIVAM";
-    public App() {
+    public App1() {
         System.out.println(password);
     }
-    // public static void App(String[] args) {
-    //     new App();
-    // }
-    // public static void App(String[] args) {
+    public static void main(String[] args) {
+        new App1();
+    }
+    // public static void main(String[] args) {
     //     String url = App.url;
     //     String password = App.password;
     //     String username = App.username;

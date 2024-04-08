@@ -1,13 +1,10 @@
-package backend;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class CreateQuestion {
-
-    private App app = new App();
-    
-
+    private App1 app = new App1();
 
     public CreateQuestion(String title, ArrayList<String> options, int correctOption) {
         String url = app.url;
@@ -22,7 +19,6 @@ public class CreateQuestion {
 
             // Convert options array to a single string separated by a delimiter
             String answer = String.join(",", options);
-
             // Set parameters for the PreparedStatement
             preparedStatement.setString(1, title);
             preparedStatement.setString(2, answer);
@@ -30,7 +26,6 @@ public class CreateQuestion {
 
             // Execute the query
             int affectedRows = preparedStatement.executeUpdate();
-
             if (affectedRows > 0) {
                 // Retrieve the auto-generated question_id
                 ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
@@ -47,9 +42,8 @@ public class CreateQuestion {
             e.printStackTrace();
         }
     }
-    public static void App(String[] args) {
+    public static void main(String[] args) {
         ArrayList<String> a = new ArrayList<String>(){{add("a"); add("b"); add("c"); add("d");}};
-
         new CreateQuestion("Question 1", a, 2);
     }
 
