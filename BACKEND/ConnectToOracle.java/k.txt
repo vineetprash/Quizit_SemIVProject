@@ -1,0 +1,1 @@
+java -cp ".;C:\Users\Shivam Rai\OneDrive\Desktop\JAVA PROJECT\ConnectToOracle.java\lib\ojdbc11.jar" App
