@@ -25,6 +25,14 @@ public class App extends JFrame {
         revalidate();
         repaint();
     }
+    public void addPanelOnTop(JPanel panel) {
+ 
+        // Add the specified panel to the frame
+        add(panel, BorderLayout.CENTER);
+
+        revalidate();
+        repaint();
+    }
     public static void main(String[] args) {
         // Run the application
         SwingUtilities.invokeLater(new Runnable() {
