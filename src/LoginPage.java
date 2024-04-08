@@ -1,7 +1,7 @@
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
-import userAuth.UserAuthenticator;
+import backend.UserAuthenticator;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
