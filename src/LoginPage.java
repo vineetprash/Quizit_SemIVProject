@@ -15,6 +15,10 @@ class LoginPage extends JPanel {
     private Color accentColor = new Color(0, 102, 102);
     private Color fgColor = accentColor;
     private Color submitColor = Color.WHITE;
+    
+    // private File file = new File(App.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+    // private String imagePath = file.getAbsolutePath();
+    private String imagePath = "C:/Users/VineetPrashant/Documents/GitHub/Quizit_SemIVProject/src/Images/bg3.jpg";
 
 
     public LoginPage(App app) {
@@ -95,7 +99,7 @@ class LoginPage extends JPanel {
         BufferedImage myPicture = null;
 
         try {
-            myPicture = ImageIO.read(new File("C:/Users/VineetPrashant/Documents/GitHub/Quizit_SemIVProject/src/Images/bg3.jpg"));
+            myPicture = ImageIO.read(new File(imagePath));
             ImageIcon imageIcon = new ImageIcon(myPicture);
             // ImageIcon imageIcon = new ImageIcon(getClass().getResource("src/Images/bg3.jpg"));
             Image image = imageIcon.getImage().getScaledInstance(1000, 900, Image.SCALE_SMOOTH);

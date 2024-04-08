@@ -1,13 +1,9 @@
-
-
 import javax.swing.*;
 import java.awt.*;
 
 
 public class App extends JFrame {
 
-
-    
     public App() {
         setTitle("Quizit");
         setSize(800, 450);
