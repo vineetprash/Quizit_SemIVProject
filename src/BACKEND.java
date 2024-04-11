@@ -140,7 +140,7 @@ public class BACKEND {
             if (rs.next()) {
                 int quizId = rs.getInt("quiz_id");
                 int timeLimit = rs.getInt("time_limit");
-                String scoringCriteria = rs.getString("scoring_criteria");
+                int scoringCriteria = rs.getInt("scoring_criteria");
                 
                 // Create and populate an array with the data
                 Object[] quizDetails = new Object[4];

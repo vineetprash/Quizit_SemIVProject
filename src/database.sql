@@ -24,7 +24,7 @@ CREATE OR REPLACE TABLE quizzes (
     quiz_id INT PRIMARY KEY,
     quiz_name VARCHAR2(100) NOT NULL,
     time_limit INT, -- in minutes
-    scoring_criteria VARCHAR2(255)
+    scoring_criteria INT
 );
 
 CREATE OR REPLACE TABLE questions (

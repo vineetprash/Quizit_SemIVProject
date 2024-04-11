@@ -126,6 +126,7 @@ class LoginPage extends JPanel {
                     String isAuthenticated = authDetails[0];
                     if (isAuthenticated.equals("1")) {
                         System.out.println("PRESSED");
+                        localApp.sessionUser = username;
                         new LandingPage(localApp, backend);
                     } else {
                         JOptionPane.showMessageDialog(app,

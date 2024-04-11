@@ -29,7 +29,7 @@ public class LandingPage extends JPanel {
         JPanel mainPanel = new JPanel(new BorderLayout());
         
         mainPanel.setLayout(new BorderLayout());
-        mainPanel.setBackground(darkColor);
+        mainPanel.setBackground(lightColor);
         setLayout(new BorderLayout());
 
         JPanel topPanel = new JPanel();
@@ -53,16 +53,16 @@ public class LandingPage extends JPanel {
         topPanel.add(logoutButton);
         
         testsPanel = new JPanel(new GridLayout(0, 3, 20, 20)); 
-        testsPanel.setBackground(darkColor);
+        testsPanel.setBackground(lightColor);
         mainPanel.add(testsPanel, BorderLayout.CENTER);
 
         JPanel welcomePanel = new JPanel();
-        welcomePanel.setBackground(darkColor);
+        welcomePanel.setBackground(lightColor);
         welcomePanel.setLayout(new BorderLayout());
         mainPanel.add(welcomePanel, BorderLayout.NORTH);
         add(mainPanel, BorderLayout.CENTER); 
 
-        welcomeLabel = new JLabel("Welcome, Vineet Prashant !");
+        welcomeLabel = new JLabel("Welcome, " + localApp.sessionUser  + " !");
         welcomeLabel.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 24));
         welcomePanel.add(welcomeLabel, BorderLayout.NORTH);
 
@@ -80,7 +80,7 @@ public class LandingPage extends JPanel {
         testsPanel.add(test3);
 
         newQuizButton.addActionListener(e -> {
-            new NewQuizPanel(localApp);
+            new NewQuizPanel(localApp, localBackend);
         });
 
         logoutButton.addActionListener(new ActionListener() {

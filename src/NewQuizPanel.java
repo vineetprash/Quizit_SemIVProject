@@ -5,20 +5,24 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 public class NewQuizPanel extends JPanel {
+    
     private JTextField numOfQuestionsField;
     private ArrayList<JTextField> questionFields;
     private ArrayList<ArrayList<JTextField>> optionFields;
     private ArrayList<JComboBox<String>> correctAnswerFields;
     private JTextField timeLimitField; 
-    private App localApp;
     private Color bgColor = new Color(217,237,191);
     private Color accentColor = new Color(0, 102, 102);
     private Color darkColor = new Color(50, 50, 50);
     private Color lightColor = Color.WHITE;
     private Color submitColor = Color.WHITE;
+    private App localApp;
+    private BACKEND localBackend;
     
-    public NewQuizPanel(App app) {
-	this.localApp = app;
+    
+    public NewQuizPanel(App app, BACKEND backend) {
+        this.localApp = app;
+        this.localBackend = backend;
         setLayout(new GridBagLayout());
         setBackground(darkColor);
         setForeground(accentColor);
@@ -45,10 +49,17 @@ public class NewQuizPanel extends JPanel {
         optionFields = new ArrayList<>();
         correctAnswerFields = new ArrayList<>();
         JButton submitButton = new JButton("Create Quiz");
+        JButton backButton = new JButton("Back");
         submitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 createQuiz();
+            }
+        });
+        backButton.addActionListener(e -> {
+            int confirm = JOptionPane.showConfirmDialog(this, "Go back to home page? You will lose all progress. ", "Back", JOptionPane.YES_NO_OPTION);
+            if (confirm == JOptionPane.YES_OPTION) {
+                localApp.showPanel(new LandingPage(localApp, localBackend));
             }
         });
         gbc.gridwidth = 2;
@@ -56,6 +67,12 @@ public class NewQuizPanel extends JPanel {
         gbc.gridy = 1;
         gbc.anchor = GridBagConstraints.CENTER;
         add(submitButton, gbc);
+        gbc.gridx = 1;
+        gbc.gridy = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
+        add(backButton, gbc);
+
+
 	    localApp.showPanel(this);
     }
 
@@ -63,6 +80,7 @@ public class NewQuizPanel extends JPanel {
         int numOfQuestions = Integer.parseInt(numOfQuestionsField.getText());
         JFrame tempFrame = addQuestionFields(numOfQuestions, "Building Quiz");
         tempFrame.setVisible(true);
+        tempFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         // ArrayList<String> questions = new ArrayList<>();
         // ArrayList<ArrayList<String>> options = new ArrayList<>();
         // ArrayList<String> correctAnswers = new ArrayList<>();

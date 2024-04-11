@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class QuizPanel extends JPanel {
+    private Object[] quizDetails;
     private ArrayList<Question> questions = new ArrayList<>();
     private Map<Integer, String> userResponses = new HashMap<>();
     private int currentQuestionIndex;
@@ -34,14 +35,25 @@ public class QuizPanel extends JPanel {
         this.quizName = quizName;
 
         // Fetch quiz details from backend
-        Object[] quizDetails = localBackend.getQuizDetails(quizName);
+        quizDetails = localBackend.getQuizDetails(quizName);
         if (quizDetails != null && quizDetails.length == 4) {
             // Extract quiz details
             int quizId = (int) quizDetails[0];
             this.quizName = (String) quizDetails[1];
             this.timeLimit = (int) quizDetails[2];
             // Fetch questions for the quiz from backend
+
             Object[][] questionsData = localBackend.fetchQuestionsByQuizId(quizId);
+            System.out.println(questionsData.length);
+            for (int i = 0; i < questionsData.length; i++) {
+                System.out.print("[ ");
+                for (int j = 0; j < questionsData[i].length; j++) {
+                    System.out.print(questionsData[i][j] + " ");
+                }
+                System.out.println("]");
+
+            }
+            System.out.println(questionsData);
             if (questionsData != null) {
                 // Populate questions array list
                 for (Object[] questionData : questionsData) {
@@ -188,7 +200,7 @@ public class QuizPanel extends JPanel {
     }
 
     private void exitQuiz() {
-        int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to exit the quiz? You will lose all progress.", "Exit Quiz", JOptionPane.YES_NO_OPTION);
+        int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to submit the quiz and exit? ", "Exit Quiz", JOptionPane.YES_NO_OPTION);
         if (confirm == JOptionPane.YES_OPTION) {
             submitQuiz();
             localApp.showPanel(new LandingPage(localApp, localBackend));
@@ -207,6 +219,7 @@ public class QuizPanel extends JPanel {
         }
         // Display score in the score label
         scoreLabel.setText("Score: " + score);
+        // localBackend.storeStudentScore(localApp.sessionUser, score, (String)quizDetails[0]);
     }
 
     private class Question {

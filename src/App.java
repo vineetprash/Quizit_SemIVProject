@@ -3,7 +3,8 @@ import java.awt.*;
 
 
 public class App extends JFrame {
-
+    public String sessionUser;
+    
     public App() {
         setTitle("Quizit");
         setSize(800, 450);
