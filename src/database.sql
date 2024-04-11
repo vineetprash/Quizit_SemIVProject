@@ -5,6 +5,21 @@ CREATE OR REPLACE TABLE users (
     role VARCHAR2(10) NOT NULL CHECK (role IN ('teacher', 'student'))
 );
 
+CREATE OR REPLACE TABLE student (
+    student_id INT PRIMARY KEY,
+    username VARCHAR2(50),
+    total_score INT,
+    age INT,
+    class VARCHAR2(20),
+);
+
+CREATE OR REPLACE TABLE teacher (
+    teacher_id INT PRIMARY KEY,
+    username VARCHAR2(50),
+    tests_created CLOB, -- JSON or other structured format (for multiple tests)
+    salary INT,
+);
+
 CREATE OR REPLACE TABLE quizzes (
     quiz_id INT PRIMARY KEY,
     quiz_name VARCHAR2(100) NOT NULL,
@@ -17,25 +32,11 @@ CREATE OR REPLACE TABLE questions (
     quiz_id INT,
     question_text CLOB NOT NULL,
     question_type VARCHAR2(20) NOT NULL,
-    options CLOB, -- JSON or other structured format for options (for multiple choice)
+    option1 VARCHAR2(20),
+    option2 VARCHAR2(20),
+    option3 VARCHAR2(20),
+    option4 VARCHAR2(20),
     correct_answer VARCHAR2(255) -- For short answer, true/false, or other types
-);
-
-CREATE OR REPLACE TABLE student (
-    student_id INT PRIMARY KEY,
-    username VARCHAR2(50),
-    total_score INT,
-    age INT,
-    class VARCHAR2(20),
-    FOREIGN KEY (student_id) REFERENCES users(user_id)
-);
-
-CREATE OR REPLACE TABLE teacher (
-    teacher_id INT PRIMARY KEY,
-    username VARCHAR2(50),
-    tests_created CLOB, -- JSON or other structured format (for multiple tests)
-    salary INT,
-    FOREIGN KEY (teacher_id) REFERENCES users(user_id)
 );
 
 CREATE OR REPLACE TABLE results (

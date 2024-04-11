@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class LandingPage extends JPanel {
@@ -122,7 +123,11 @@ public class LandingPage extends JPanel {
             attemptButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    new QuizPanel(localApp, localBackend);
+                    try {
+                        new QuizPanel(localApp, localBackend, testName);
+                    } catch (SQLException e1) {
+                        e1.printStackTrace();
+                    }
                 }
             });
         }

@@ -124,7 +124,7 @@ class LoginPage extends JPanel {
                     // boolean isAuthenticated = UserAuthenticator.authenticateLogin(username, password);
                     String[] authDetails = backend.authenticate(username, password);
                     String isAuthenticated = authDetails[0];
-                    if (isAuthenticated.equals(1)) {
+                    if (isAuthenticated.equals("1")) {
                         System.out.println("PRESSED");
                         new LandingPage(localApp, backend);
                     } else {

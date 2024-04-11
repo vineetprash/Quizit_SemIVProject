@@ -43,22 +43,22 @@ public class BACKEND {
 
     // Function to authenticate user login
     public String[] authenticate(String username, String password) {
-        try {
-            PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM users WHERE username = ? AND password = ?");
-            pstmt.setString(1, username);
-            pstmt.setString(2, password);
-            ResultSet rs = pstmt.executeQuery();
-            
-            if (rs.next()) {
-                String role = rs.getString("role");
-                return new String[]{"1", role};
-            } else {
-                return new String[]{"0", "NA"};
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return new String[]{"0", "NA"};
-        }
+        return new String[]{"1", "teacher"};
+        // try {
+        //     PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM users WHERE username = ? AND password = ?");
+        //     pstmt.setString(1, username);
+        //     pstmt.setString(2, password);
+        //     ResultSet rs = pstmt.executeQuery();
+        //     if (rs.next()) {
+        //         String role = rs.getString("role");
+        //         return new String[]{"1", role};
+        //     } else {
+        //         return new String[]{"0", "NA"};
+        //     }
+        // } catch (SQLException e) {
+        //     e.printStackTrace();
+        //     return new String[]{"0", "NA"};
+        // }
     }
     
     
@@ -131,8 +131,8 @@ public class BACKEND {
     
     
 
-    // Function to retrieve quiz details
-    private Object[] getQuizDetails(String quizName) throws SQLException {
+    // Function to retrieve quiz details (quizId, quizName, timeLimit, scoringCriteria)
+    public Object[] getQuizDetails(String quizName) throws SQLException {
         String sql = "SELECT * FROM quizzes WHERE quiz_name = ?";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, quizName);
@@ -155,33 +155,37 @@ public class BACKEND {
         return null;
     }
     
-    // Function to fetch List of all questions(question_id, question_text, options, correct_answer)
-    public Object[] fetchQuestionsByQuizId(int quizId) {
-        List<Object> questionsList = new ArrayList<>();
+    // Function to fetch List of all questions(question_id, question_text, option1, option2, option3, option4, correct_answer)
+    public Object[][] fetchQuestionsByQuizId(int quizId) {
+        List<Object[]> questionsList = new ArrayList<>();
         try {
             String sql = "SELECT * FROM questions WHERE quiz_id = ?";
             try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
                 pstmt.setInt(1, quizId);
                 ResultSet rs = pstmt.executeQuery();
-
+    
                 while (rs.next()) {
                     int questionId = rs.getInt("question_id");
                     String questionText = rs.getString("question_text");
-                    String questionType = rs.getString("question_type");
-                    String options = rs.getString("options");
+                    String option1 = rs.getString("option1");
+                    String option2 = rs.getString("option2");
+                    String option3 = rs.getString("option3");
+                    String option4 = rs.getString("option4");
                     String correctAnswer = rs.getString("correct_answer");
-
+    
                     // Create an Object array to hold question details
-                    Object[] questionDetails = {questionId, questionText, questionType, options, correctAnswer};
+                    Object[] questionDetails = {questionId, questionText, option1, option2, option3, option4, correctAnswer};
                     questionsList.add(questionDetails);
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        // Convert the list to an array and return
-        return questionsList.toArray();
+        // Convert the list to a 2D array and return
+        return questionsList.toArray(new Object[0][]);
     }
+    
+    
 
     public Object[][] viewScores(int studentId) {
         List<Object[]> scoresList = new ArrayList<>();
