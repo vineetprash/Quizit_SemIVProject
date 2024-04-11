@@ -77,7 +77,7 @@ public class LandingPage extends JPanel {
         testsPanel.add(test3);
 
         newQuizButton.addActionListener(e -> {
-            // TODO: Add action for new quiz button
+            new NewQuizPanel(localApp);
         });
 
         logoutButton.addActionListener(new ActionListener() {

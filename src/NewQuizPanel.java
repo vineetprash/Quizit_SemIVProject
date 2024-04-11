@@ -10,23 +10,32 @@ public class NewQuizPanel extends JPanel {
     private ArrayList<ArrayList<JTextField>> optionFields;
     private ArrayList<JComboBox<String>> correctAnswerFields;
     private JTextField timeLimitField; 
-
     private App localApp;
+    private Color bgColor = new Color(217,237,191);
+    private Color accentColor = new Color(0, 102, 102);
+    private Color darkColor = new Color(50, 50, 50);
+    private Color lightColor = Color.WHITE;
+    private Color submitColor = Color.WHITE;
+    
     public NewQuizPanel(App app) {
 	this.localApp = app;
         setLayout(new GridBagLayout());
-        setBackground(Color.WHITE);
+        setBackground(darkColor);
+        setForeground(accentColor);
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.fill = GridBagConstraints.BOTH;
 
         // Number of questions field
         JLabel numOfQuestionsLabel = new JLabel("Number of Questions:");
+        numOfQuestionsLabel.setForeground(lightColor);
         gbc.gridx = 0;
         gbc.gridy = 0;
         add(numOfQuestionsLabel, gbc);
 
         numOfQuestionsField = new JTextField(10);
+        numOfQuestionsField.setBackground(darkColor);
+        numOfQuestionsField.setForeground(lightColor);
         gbc.gridx = 1;
         gbc.gridy = 0;
         add(numOfQuestionsField, gbc);
@@ -52,7 +61,8 @@ public class NewQuizPanel extends JPanel {
 
    private void createQuiz() {
         int numOfQuestions = Integer.parseInt(numOfQuestionsField.getText());
-        new (addQuestionFields(numOfQuestions));
+        JFrame tempFrame = addQuestionFields(numOfQuestions, "Building Quiz");
+        tempFrame.setVisible(true);
         // ArrayList<String> questions = new ArrayList<>();
         // ArrayList<ArrayList<String>> options = new ArrayList<>();
         // ArrayList<String> correctAnswers = new ArrayList<>();
@@ -74,60 +84,82 @@ public class NewQuizPanel extends JPanel {
         // System.out.println("Correct Answers: " + correctAnswers);
     }
 
-    private JPanel addQuestionFields(int numOfQuestions) {
+    private JFrame addQuestionFields(int numOfQuestions, String title) {
+        JPanel questionFieldsPanel = new JPanel(new GridBagLayout());
+        questionFieldsPanel.setBackground(darkColor);
+        questionFieldsPanel.setForeground(lightColor);
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridwidth = 2;
         gbc.gridx = 0;
-        gbc.gridy = 2;
-        JPanel questionFields = new JPanel();
-
+        gbc.gridy = 0;
+    
         for (int i = 0; i < numOfQuestions; i++) {
             JLabel questionLabel = new JLabel("Question " + (i + 1) + ":");
-            gbc.gridy++;
-            questionFields.add(questionLabel, gbc);
+            questionLabel.setForeground(lightColor);
+            questionFieldsPanel.add(questionLabel, gbc);
 
+    
+            gbc.gridy++;
             JTextField questionField = new JTextField(30);
+            questionField.setForeground(lightColor);
+            questionField.setBackground(darkColor);
+            questionFieldsPanel.add(questionField, gbc);
+    
             gbc.gridy++;
-            add(questionField, gbc);
-            questionFields.questionFields.add(questionField);
-
             JLabel optionsLabel = new JLabel("Options:");
-            gbc.gridy++;
-            questionFields.add(optionsLabel, gbc);
-
+            optionsLabel.setForeground(lightColor);
+            optionsLabel.setBackground(darkColor);
+            questionFieldsPanel.add(optionsLabel, gbc);
+            
+    
             ArrayList<JTextField> optionFieldsList = new ArrayList<>();
             for (int j = 0; j < 4; j++) {
-                JTextField optionField = new JTextField(30);
                 gbc.gridy++;
-                add(optionField, gbc);
+                JTextField optionField = new JTextField(30);
+                optionField.setBackground(darkColor);
+                optionField.setForeground(lightColor);
+                questionFieldsPanel.add(optionField, gbc);
                 optionFieldsList.add(optionField);
             }
-            optionFields.add(optionFieldsList);
-            questionFields.add(optionField);
-            JLabel correctAnswerLabel = new JLabel("Correct Answer:");
+    
             gbc.gridy++;
-            questionFields.add(correctAnswerLabel, gbc);
-
+            JLabel correctAnswerLabel = new JLabel("Correct Answer:");
+            questionFieldsPanel.add(correctAnswerLabel, gbc);
+    
+            gbc.gridy++;
             String[] options = {"Option 1", "Option 2", "Option 3", "Option 4"};
             JComboBox<String> correctAnswerComboBox = new JComboBox<>(options);
-            gbc.gridy++;
-            questionFields.add(correctAnswerComboBox, gbc);
+            questionFieldsPanel.add(correctAnswerComboBox, gbc);
             correctAnswerFields.add(correctAnswerComboBox);
-
+    
+            gbc.gridy++;
+            gbc.insets = new Insets(20, 0, 0, 0); // Add some space between questions
         }
-
+    
         gbc.gridy++;
+        gbc.insets = new Insets(5, 5, 5, 5);
         JLabel timeLimitLabel = new JLabel("Time Limit (in minutes):");
+        questionFieldsPanel.add(timeLimitLabel, gbc);
+    
         gbc.gridy++;
-        questionFields.add(timeLimitLabel, gbc);
+        JTextField timeLimitField = new JTextField(10);
+        questionFieldsPanel.add(timeLimitField, gbc);
 
-        timeLimitField = new JTextField(10);
-        gbc.gridy++;
-        questionFields.add(timeLimitField, gbc);
-        return questionFields;
+        JScrollPane scrollPane = new JScrollPane(questionFieldsPanel);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+
+        JFrame frame = new JFrame(title);
+        frame.add(scrollPane);
+        frame.setSize(800, 500);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.setLocationRelativeTo(null);
+        frame.pack();
+     
+        return frame;
     }
+    
 
 
 
