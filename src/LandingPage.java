@@ -4,20 +4,22 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class LandingPage extends JPanel {
     private App localApp;
     private BACKEND localBackend;
     private JButton newQuizButton;
     private JButton logoutButton;
+    private JButton viewResultsButton;
     private JPanel testsPanel;
     private JLabel welcomeLabel;
     private JLabel pendingTestsLabel;
 
     private ArrayList<TestPanel> listOfTestPanels = new ArrayList<>();
+    private List<Object[]> uniqueQuizzes;
 
-
-    private Color bgColor = new Color(217,237,191);
+    private Color bgColor = new Color(217, 237, 191);
     private Color accentColor = new Color(0, 102, 102);
     private Color darkColor = new Color(50, 50, 50);
     private Color lightColor = Color.WHITE;
@@ -27,7 +29,7 @@ public class LandingPage extends JPanel {
         this.localApp = app;
         this.localBackend = backend;
         JPanel mainPanel = new JPanel(new BorderLayout());
-        
+
         mainPanel.setLayout(new BorderLayout());
         mainPanel.setBackground(lightColor);
         setLayout(new BorderLayout());
@@ -45,14 +47,22 @@ public class LandingPage extends JPanel {
         newQuizButton = new JButton("New Quiz");
         newQuizButton.setBackground(accentColor);
         newQuizButton.setForeground(lightColor);
+        newQuizButton.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 10));
         topPanel.add(newQuizButton);
+
+        viewResultsButton = new JButton("View Results");
+        viewResultsButton.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 10));
+        viewResultsButton.setBackground(accentColor);
+        viewResultsButton.setForeground(lightColor);
+        topPanel.add(viewResultsButton);
 
         logoutButton = new JButton("Logout");
         logoutButton.setBackground(accentColor);
         logoutButton.setForeground(lightColor);
+        logoutButton.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 10));
         topPanel.add(logoutButton);
-        
-        testsPanel = new JPanel(new GridLayout(0, 3, 20, 20)); 
+
+        testsPanel = new JPanel(new GridLayout(0, 3, 20, 20));
         testsPanel.setBackground(lightColor);
         mainPanel.add(testsPanel, BorderLayout.CENTER);
 
@@ -60,9 +70,9 @@ public class LandingPage extends JPanel {
         welcomePanel.setBackground(lightColor);
         welcomePanel.setLayout(new BorderLayout());
         mainPanel.add(welcomePanel, BorderLayout.NORTH);
-        add(mainPanel, BorderLayout.CENTER); 
+        add(mainPanel, BorderLayout.CENTER);
 
-        welcomeLabel = new JLabel("Welcome, " + localApp.sessionUser  + " !");
+        welcomeLabel = new JLabel("Welcome, " + localApp.sessionUser + " !");
         welcomeLabel.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 24));
         welcomePanel.add(welcomeLabel, BorderLayout.NORTH);
 
@@ -70,24 +80,31 @@ public class LandingPage extends JPanel {
         pendingTestsLabel.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 18));
         welcomePanel.add(pendingTestsLabel, BorderLayout.CENTER);
 
-        TestPanel test1 = new TestPanel("NNFL-IE2", "Deadline: 24/3/24, 12am", "Created by: Dr. XYZ");
-        TestPanel test2 = new TestPanel("DBMS-Practise Test", "Deadline: 27/3/24, 7pm", "Created by: Dr. XYZ");
-        TestPanel test3 = new TestPanel("PSE-Proficiency Test", "Deadline: 29/3/24, 12am", "Created by: Dr. XYZ");
-        
-        // Hardcoded currently, needs to be dynamic
-        testsPanel.add(test1);
-        testsPanel.add(test2);
-        testsPanel.add(test3);
+        try {
+            // uniqueQuizzes = {quizId, quizName}
+            uniqueQuizzes = localBackend.getQuizzes();
+            for (Object[] quiz : uniqueQuizzes) {
+                int quizId = (int) quiz[0];
+                String quizName = (String) quiz[1];
+                TestPanel testPanel = new TestPanel(quizName, "Subtitle", "Dummy User");
+                testsPanel.add(testPanel);
+                listOfTestPanels.add(testPanel);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         newQuizButton.addActionListener(e -> {
             new NewQuizPanel(localApp, localBackend);
         });
 
-        logoutButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                new LoginPage(localApp, backend);
-            }
+        logoutButton.addActionListener(e -> {
+            new LoginPage(localApp, localBackend);
+        });
+
+        viewResultsButton.addActionListener(e -> {
+            Object[][] data = localBackend.viewScores(localApp.sessionUser);
+            new ResultFrame(data);
         });
 
         localApp.showPanel(this);
@@ -103,7 +120,7 @@ public class LandingPage extends JPanel {
         public TestPanel(String testName, String deadline, String createdBy) {
             setLayout(new BorderLayout());
             setBackground(lightColor);
-            setBorder(BorderFactory.createLineBorder(Color.BLACK)); // Added border
+            setBorder(BorderFactory.createLineBorder(Color.BLACK)); 
             this.nameLabel.setText(testName);
             this.deadlineLabel.setText(deadline);
             this.createdLabel.setText(createdBy);
@@ -125,7 +142,7 @@ public class LandingPage extends JPanel {
                 public void actionPerformed(ActionEvent e) {
                     try {
                         System.out.println("KUCH HUA");
-                        new QuizPanel(localApp, localBackend, "MCQ");
+                        new QuizPanel(localApp, localBackend, testName);
                     } catch (SQLException e1) {
                         e1.printStackTrace();
                     }

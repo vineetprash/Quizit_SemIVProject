@@ -65,7 +65,8 @@ public class QuizPanel extends JPanel {
                             options.add((String) questionData[i]);
                         }
                     }
-                    questions.add(new Question(questionText, options, (String) questionData[6]));
+                    int correctOption = (int) questionData[6];
+                    questions.add(new Question(questionText, options, (String) questionData[correctOption + 2]));
                 }
             }
         }
@@ -133,7 +134,14 @@ public class QuizPanel extends JPanel {
         // Add action listeners to buttons
         prevButton.addActionListener(e -> showPreviousQuestion());
         nextButton.addActionListener(e -> showNextQuestion());
-        exitButton.addActionListener(e -> exitQuiz());
+        exitButton.addActionListener(e -> {
+            try {
+                exitQuiz();
+            } catch (SQLException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            }
+        });
 
         // Show first question
         showQuestion(0);
@@ -154,7 +162,12 @@ public class QuizPanel extends JPanel {
                 seconds--;
                 if (seconds == 0) {
                     timerLabel.setText("Timer: 00:00");
-                    submitQuiz(); // Submit quiz when timer reaches zero
+                    try {
+                        submitQuiz();
+                    } catch (SQLException e1) {
+                        // TODO Auto-generated catch block
+                        e1.printStackTrace();
+                    } // Submit quiz when timer reaches zero
                     timer.stop();
                 } else {
                     int minutes = seconds / 60;
@@ -200,7 +213,7 @@ public class QuizPanel extends JPanel {
         }
     }
 
-    private void exitQuiz() {
+    private void exitQuiz() throws SQLException {
         int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to submit the quiz and exit? ", "Exit Quiz", JOptionPane.YES_NO_OPTION);
         if (confirm == JOptionPane.YES_OPTION) {
             submitQuiz();
@@ -208,7 +221,7 @@ public class QuizPanel extends JPanel {
         }
     }
 
-    private void submitQuiz() {
+    private void submitQuiz() throws SQLException {
         timer.stop(); // Stop the timer
         score = 0; // Reset score
         for (int i = 0; i < questions.size(); i++) {
@@ -219,8 +232,8 @@ public class QuizPanel extends JPanel {
             }
         }
         // Display score in the score label
-        scoreLabel.setText("Score: " + score);
-        // localBackend.storeStudentScore(localApp.sessionUser, score, (String)quizDetails[0]);
+        // scoreLabel.setText("Score: " + score);
+        localBackend.storeStudentScore(localApp.sessionUser, score, (int)quizDetails[0]);
     }
 
     private class Question {

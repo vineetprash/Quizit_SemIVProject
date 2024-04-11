@@ -43,28 +43,28 @@ public class BACKEND {
 
     // Function to authenticate user login
     public String[] authenticate(String username, String password) {
-    
-        try {
-            PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM users WHERE username = ? AND password = ?");
-            pstmt.setString(1, username);
-            pstmt.setString(2, password);
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                String role = rs.getString("role");
-                return new String[]{"1", role};
-            } else {
-                return new String[]{"0", "NA"};
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return new String[]{"0", "NA"};
-        }
+        return new String[]{"1","teacher"};
+        // try {
+        //     PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM users WHERE username = ? AND password = ?");
+        //     pstmt.setString(1, username);
+        //     pstmt.setString(2, password);
+        //     ResultSet rs = pstmt.executeQuery();
+        //     if (rs.next()) {
+        //         String role = rs.getString("role");
+        //         return new String[]{"1", role};
+        //     } else {
+        //         return new String[]{"0", "NA"};
+        //     }
+        // } catch (SQLException e) {
+        //     e.printStackTrace();
+        //     return new String[]{"0", "NA"};
+        // }
     }
     
     
 
     // Function to create a quiz in the database
-    private boolean createQuizDB(String quizName, int timeLimit, String scoringCriteria) throws SQLException {
+    public boolean createQuizDB(String quizName, int timeLimit, String scoringCriteria) throws SQLException {
         String sql = "INSERT INTO quizzes(quiz_name, time_limit, scoring_criteria) VALUES (?, ?, ?)";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, quizName);
@@ -77,7 +77,7 @@ public class BACKEND {
 
 
     // Function to get the ID of a quiz by its name
-    private int getQuizId(String quizName) throws SQLException {
+    public int getQuizId(String quizName) throws SQLException {
         String sql = "SELECT quiz_id FROM quizzes WHERE quiz_name = ?";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, quizName);
@@ -90,8 +90,21 @@ public class BACKEND {
         }
     }
 
+    public String getQuizName(int quizId) throws SQLException {
+        String sql = "SELECT quiz_name FROM quizzes WHERE quiz_id = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, quizId);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getString("quiz_name");
+            } else {
+                throw new SQLException("Quiz not found: " + quizId);
+            }
+        }
+    }
+
     // Function to add a question to a quiz
-    private void addQuestionToQuiz(int quizId, String questionText, String questionType, String options,
+    public void addQuestionToQuiz(int quizId, String questionText, String questionType, String options,
             String correctAnswer) throws SQLException {
         String sql = "INSERT INTO questions(quiz_id, question_text, question_type, options, correct_answer) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -107,15 +120,17 @@ public class BACKEND {
 
     
     
-    private void storeStudentScore(int studentId, int score, String quizId) {
+    public void storeStudentScore(String username, int score, int quizId) throws SQLException {
+        String quizName = getQuizName(quizId);
         try {
             // Prepare SQL statement
-            String sql = "INSERT INTO results(student_id, quiz_id, score) VALUES (?, ?, ?)";
+            String sql = "INSERT INTO results(student_id, quiz_id, quiz_name, score) VALUES (?, ?, ?, ?)";
             try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
                 // Set parameters
-                pstmt.setInt(1, studentId);
-                pstmt.setString(2, quizId);
-                pstmt.setInt(3, score);
+                pstmt.setString(1, username);
+                pstmt.setInt(2, quizId);
+                pstmt.setString(3, quizName);
+                pstmt.setInt(4, score);
                 // Execute SQL statement
                 int rowsAffected = pstmt.executeUpdate();
                 if (rowsAffected > 0) {
@@ -187,18 +202,19 @@ public class BACKEND {
     
     
 
-    public Object[][] viewScores(int studentId) {
+    public Object[][] viewScores(String username) {
         List<Object[]> scoresList = new ArrayList<>();
         try {
-            String sql = "SELECT quiz_id, score FROM results WHERE student_id = ?";
+            String sql = "SELECT quiz_id, quiz_name, score FROM results WHERE username = ?";
             try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setInt(1, studentId);
+                pstmt.setString(1, username);
                 ResultSet rs = pstmt.executeQuery();
                 while (rs.next()) {
                     String quizId = rs.getString("quiz_id");
+                    String quizName = rs.getString("quiz_name");
                     int score = rs.getInt("score");
                     // Create an Object array to hold test ID and score
-                    Object[] scoreDetails = {quizId, score};
+                    Object[] scoreDetails = {quizId, quizName, score};
                     scoresList.add(scoreDetails);
                 }
             }
@@ -207,6 +223,22 @@ public class BACKEND {
         }
         // Convert the list to a 2D array and return
         return scoresList.toArray(new Object[0][]);
+    }
+
+
+    public List<Object[]> getQuizzes() throws SQLException {
+        List<Object[]> quizList = new ArrayList<>();
+        String sql = "SELECT DISTINCT quiz_id, quiz_name FROM quizzes";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                int quizId = rs.getInt("quiz_id");
+                String quizName = rs.getString("quiz_name");
+                Object[] quizDetails = {quizId, quizName};
+                quizList.add(quizDetails);
+            }
+        }
+        return quizList;
     }
     
 }

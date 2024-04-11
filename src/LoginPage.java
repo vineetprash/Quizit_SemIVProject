@@ -18,7 +18,7 @@ class LoginPage extends JPanel {
     
     // private File file = new File(App.class.getProtectionDomain().getCodeSource().getLocation().getPath());
     // private String imagePath = file.getAbsolutePath();
-    private String imagePath = "C:/Users/VineetPrashant/Documents/GitHub/Quizit_SemIVProject/src/Images/bg3.jpg";
+    private String imagePath = "C:/Users/VineetPrashant/Documents/GitHub/Quizit_SemIVProject/src/Images/bg2.jpg";
 
 
     public LoginPage(App app, BACKEND backend) {
@@ -45,9 +45,9 @@ class LoginPage extends JPanel {
         loginPanel.add(passwordLabel, gbc);
 
         gbc.gridy++;
-        JLabel userTypeLabel = new JLabel("You are a:");
-        userTypeLabel.setForeground(fgColor); 
-        loginPanel.add(userTypeLabel, gbc);
+        // JLabel userTypeLabel = new JLabel("You are a:");
+        // userTypeLabel.setForeground(fgColor); 
+        // loginPanel.add(userTypeLabel, gbc);
 
         gbc.gridx = 1;
         gbc.gridy = 0;
@@ -66,21 +66,21 @@ class LoginPage extends JPanel {
         loginPanel.add(passField, gbc);
 
         gbc.gridy++;
-        ButtonGroup buttonGroup = new ButtonGroup();
-        JRadioButton isTeacher = new JRadioButton("Teacher");
-        JRadioButton isStudent = new JRadioButton("Student");
-        buttonGroup.add(isStudent);
-        buttonGroup.add(isTeacher);
-        isTeacher.setBackground(bgColor); 
-        isStudent.setBackground(bgColor); 
-        isTeacher.setForeground(fgColor); 
-        isStudent.setForeground(fgColor); 
+        // ButtonGroup buttonGroup = new ButtonGroup();
+        // JRadioButton isTeacher = new JRadioButton("Teacher");
+        // JRadioButton isStudent = new JRadioButton("Student");
+        // buttonGroup.add(isStudent);
+        // buttonGroup.add(isTeacher);
+        // isTeacher.setBackground(bgColor); 
+        // isStudent.setBackground(bgColor); 
+        // isTeacher.setForeground(fgColor); 
+        // isStudent.setForeground(fgColor); 
         JPanel userTypePanel = new JPanel(new GridLayout(1, 2));
         userTypePanel.setBackground(bgColor); 
         userTypePanel.setForeground(fgColor); 
 
-        userTypePanel.add(isTeacher);
-        userTypePanel.add(isStudent);
+        // userTypePanel.add(isTeacher);
+        // userTypePanel.add(isStudent);
         loginPanel.add(userTypePanel, gbc);
 
         gbc.gridx = 0;
