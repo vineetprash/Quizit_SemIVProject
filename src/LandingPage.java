@@ -124,7 +124,8 @@ public class LandingPage extends JPanel {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     try {
-                        new QuizPanel(localApp, localBackend, testName);
+                        System.out.println("KUCH HUA");
+                        new QuizPanel(localApp, localBackend, "MCQ");
                     } catch (SQLException e1) {
                         e1.printStackTrace();
                     }

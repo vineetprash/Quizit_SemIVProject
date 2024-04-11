@@ -20,14 +20,14 @@ CREATE OR REPLACE TABLE teacher (
     salary INT,
 );
 
-CREATE OR REPLACE TABLE quizzes (
+CREATE  TABLE quizzes (
     quiz_id INT PRIMARY KEY,
     quiz_name VARCHAR2(100) NOT NULL,
     time_limit INT, -- in minutes
     scoring_criteria INT
 );
 
-CREATE OR REPLACE TABLE questions (
+CREATE TABLE questions (
     question_id INT PRIMARY KEY,
     quiz_id INT,
     question_text CLOB NOT NULL,
@@ -47,7 +47,7 @@ CREATE OR REPLACE TABLE results (
 
 -- automate question_id
 CREATE OR REPLACE SEQUENCE question_id_seq START WITH 1 INCREMENT BY 1;
-CREATE OR REPLACE OR REPLACE TRIGGER questions_trigger
+CREATE OR REPLACE  TRIGGER questions_trigger
 BEFORE INSERT ON questions
 FOR EACH ROW
 BEGIN
@@ -55,7 +55,8 @@ BEGIN
 END;
 
 -- automate quiz id
-CREATE OR REPLACE SEQUENCE quiz_id_seq START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE quiz_id_seq START WITH 1 INCREMENT BY 1;
+
 CREATE OR REPLACE TRIGGER quizzes_trigger
 BEFORE INSERT ON quizzes
 FOR EACH ROW
@@ -64,7 +65,7 @@ BEGIN
 END;
 
 -- automate user id
-CREATE OR REPLACE SEQUENCE user_id_seq START WITH 1 INCREMENT BY 1;
+CREATE  SEQUENCE user_id_seq START WITH 1 INCREMENT BY 1;
 CREATE OR REPLACE TRIGGER users_trigger
 BEFORE INSERT ON users
 FOR EACH ROW

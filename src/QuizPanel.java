@@ -33,6 +33,7 @@ public class QuizPanel extends JPanel {
         this.localApp = app;
         this.localBackend = backend;
         this.quizName = quizName;
+        System.out.println("This is quiz panel !!!!");
 
         // Fetch quiz details from backend
         quizDetails = localBackend.getQuizDetails(quizName);
@@ -44,7 +45,7 @@ public class QuizPanel extends JPanel {
             // Fetch questions for the quiz from backend
 
             Object[][] questionsData = localBackend.fetchQuestionsByQuizId(quizId);
-            System.out.println(questionsData.length);
+            System.out.println(questionsData.length + "Hellllllll yeaaaaaaaaaaa");
             for (int i = 0; i < questionsData.length; i++) {
                 System.out.print("[ ");
                 for (int j = 0; j < questionsData[i].length; j++) {
