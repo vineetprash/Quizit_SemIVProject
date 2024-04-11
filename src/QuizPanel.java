@@ -17,9 +17,11 @@ public class QuizPanel extends JPanel {
     private JLabel timerLabel;
 
     private App localApp;
+    private BACKEND localBackend;
 
-    public QuizPanel(App app) {
+    public QuizPanel(App app, BACKEND backend) {
         this.localApp = app;
+        this.localBackend = backend;
         // DUMMY DATA 1
         ArrayList<String> options1 = new ArrayList<>();
         options1.add("Option 1 for Question 1");
@@ -159,7 +161,7 @@ public class QuizPanel extends JPanel {
         int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to exit the quiz? You will loose all progress.", "Exit Quiz", JOptionPane.YES_NO_OPTION);
         if (confirm == JOptionPane.YES_OPTION) {
             
-            localApp.showPanel(new LandingPage(localApp));
+            localApp.showPanel(new LandingPage(localApp, localBackend));
         }
     }
 

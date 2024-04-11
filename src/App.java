@@ -7,11 +7,12 @@ public class App extends JFrame {
     public App() {
         setTitle("Quizit");
         setSize(800, 450);
+        BACKEND backend = new BACKEND();
 
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null); // Center align the JFrame
        
-        new LoginPage(this);
+        new LoginPage(this, backend);
         setVisible(true);
     }
 

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 public class LandingPage extends JPanel {
     private App localApp;
+    private BACKEND localBackend;
     private JButton newQuizButton;
     private JButton logoutButton;
     private JPanel testsPanel;
@@ -21,8 +22,9 @@ public class LandingPage extends JPanel {
     private Color lightColor = Color.WHITE;
     private Color submitColor = Color.WHITE;
 
-    public LandingPage(App app) {
+    public LandingPage(App app, BACKEND backend) {
         this.localApp = app;
+        this.localBackend = backend;
         JPanel mainPanel = new JPanel(new BorderLayout());
         
         mainPanel.setLayout(new BorderLayout());
@@ -83,7 +85,7 @@ public class LandingPage extends JPanel {
         logoutButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new LoginPage(localApp);
+                new LoginPage(localApp, backend);
             }
         });
 
@@ -120,7 +122,7 @@ public class LandingPage extends JPanel {
             attemptButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    new QuizPanel(localApp);
+                    new QuizPanel(localApp, localBackend);
                 }
             });
         }

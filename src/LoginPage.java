@@ -1,11 +1,13 @@
 import javax.imageio.ImageIO;
 import javax.swing.*;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.*;
+
+
+
 
 class LoginPage extends JPanel {
     private App localApp;
@@ -19,7 +21,7 @@ class LoginPage extends JPanel {
     private String imagePath = "C:/Users/VineetPrashant/Documents/GitHub/Quizit_SemIVProject/src/Images/bg3.jpg";
 
 
-    public LoginPage(App app) {
+    public LoginPage(App app, BACKEND backend) {
         System.out.println("LOGIN");
         this.localApp = app;
         JPanel contentPanel = new JPanel(new BorderLayout());
@@ -119,10 +121,12 @@ class LoginPage extends JPanel {
                 String password = new String(passField.getPassword());
                 // Authenticate user
                 if (username.length() > 0 && password.length() > 0) {
-                    boolean isAuthenticated = UserAuthenticator.authenticateLogin(username, password);
-                    if (isAuthenticated) {
+                    // boolean isAuthenticated = UserAuthenticator.authenticateLogin(username, password);
+                    String[] authDetails = backend.authenticate(username, password);
+                    String isAuthenticated = authDetails[0];
+                    if (isAuthenticated.equals(1)) {
                         System.out.println("PRESSED");
-                        new LandingPage(localApp);
+                        new LandingPage(localApp, backend);
                     } else {
                         JOptionPane.showMessageDialog(app,
                                 "Username and Password do not match", "Error", JOptionPane.ERROR_MESSAGE);

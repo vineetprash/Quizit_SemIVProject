@@ -4,7 +4,7 @@ import java.util.List;
 import java.lang.String;
 
 
-public class login_signup {
+public class BACKEND {
     private Connection conn;
     // Replace with your database connection details
     String url = "jdbc:oracle:thin:@LAPTOP-EK807I1M:1521:xe";
@@ -12,7 +12,7 @@ public class login_signup {
     String password = "SHIVAM";
 
 
-    public login_signup() {
+    public BACKEND() {
         // Initialize database connection
         try {
             Class.forName("oracle.jdbc.driver.OracleDriver");
@@ -21,6 +21,7 @@ public class login_signup {
             e.printStackTrace();
         }
     }
+    
     // Function to sign up a new user
     public boolean signUp(String username, String password, String role) {
         try {
@@ -41,7 +42,7 @@ public class login_signup {
 
 
     // Function to authenticate user login
-    public Object[] authenticate(String username, String password) {
+    public String[] authenticate(String username, String password) {
         try {
             PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM users WHERE username = ? AND password = ?");
             pstmt.setString(1, username);
@@ -50,13 +51,13 @@ public class login_signup {
             
             if (rs.next()) {
                 String role = rs.getString("role");
-                return new Object[]{true, role};
+                return new String[]{"1", role};
             } else {
-                return new Object[]{false, null};
+                return new String[]{"0", "NA"};
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            return new Object[]{false, null};
+            return new String[]{"0", "NA"};
         }
     }
     
@@ -176,7 +177,7 @@ public class login_signup {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace(); // Handle or log the exception appropriately
+            e.printStackTrace();
         }
         // Convert the list to an array and return
         return questionsList.toArray();
