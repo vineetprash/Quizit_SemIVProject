@@ -1,12 +1,16 @@
+// quizDetails(quizId, quizName, timeLimit, scoringCriteria)
+// questionsData(question_id, question_text, option1, option2, option3, option4, correct_answer)
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class QuizPanel extends JPanel {
     private ArrayList<Question> questions = new ArrayList<>();
-    private ArrayList<String> userResponses;
+    private Map<Integer, String> userResponses = new HashMap<>();
     private int currentQuestionIndex;
     private JLabel questionLabel;
     private JPanel optionsPanel;
@@ -16,11 +20,13 @@ public class QuizPanel extends JPanel {
     private JPanel questionNumberPanel;
     private Timer timer;
     private JLabel timerLabel;
+    private int timeLimit;
+    private int score = 0;
+    private JLabel scoreLabel; // New label to display score
 
     private App localApp;
     private BACKEND localBackend;
     private String quizName;
-    private int timeLimit;
 
     public QuizPanel(App app, BACKEND backend, String quizName) throws SQLException {
         this.localApp = app;
@@ -46,14 +52,14 @@ public class QuizPanel extends JPanel {
                             options.add((String) questionData[i]);
                         }
                     }
-                    questions.add(new Question(questionText, options));
+                    questions.add(new Question(questionText, options, (String) questionData[6]));
                 }
             }
         }
 
-        userResponses = new ArrayList<>(questions.size());
+        // Initialize user responses map with default values
         for (int i = 0; i < questions.size(); i++) {
-            userResponses.add("NA");
+            userResponses.put(i, "NA");
         }
 
         this.currentQuestionIndex = 0;
@@ -62,7 +68,7 @@ public class QuizPanel extends JPanel {
         setBackground(new Color(50, 50, 50));
 
         // Timer setup
-        timerLabel = new JLabel("Timer: 00:00");
+        timerLabel = new JLabel();
         timerLabel.setBackground(new Color(50, 50, 50));
         timerLabel.setForeground(Color.WHITE);
         timerLabel.setOpaque(true);
@@ -71,8 +77,12 @@ public class QuizPanel extends JPanel {
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.setBackground(new Color(50, 50, 50));
         topPanel.add(timerLabel, BorderLayout.CENTER);
+        // Add score label to top panel
+        scoreLabel = new JLabel("Score: 0");
+        scoreLabel.setForeground(Color.WHITE);
+        scoreLabel.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+        topPanel.add(scoreLabel, BorderLayout.EAST);
         add(topPanel, BorderLayout.NORTH);
-        startTimer();
 
         JPanel mainPanel = new JPanel(new BorderLayout());
 
@@ -115,23 +125,29 @@ public class QuizPanel extends JPanel {
         // Show first question
         showQuestion(0);
 
+        // Start timer with time limit
+        startTimer(timeLimit);
+
         // Show panel in the application window
         localApp.showPanel(this);
     }
 
-    private void startTimer() {
+    private void startTimer(int timeLimit) {
         timer = new Timer(1000, new ActionListener() {
-            int seconds = 0;
-            int minutes = 0;
+            int seconds = timeLimit * 60;
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                seconds++;
-                if (seconds == 60) {
-                    minutes++;
-                    seconds = 0;
+                seconds--;
+                if (seconds == 0) {
+                    timerLabel.setText("Timer: 00:00");
+                    submitQuiz(); // Submit quiz when timer reaches zero
+                    timer.stop();
+                } else {
+                    int minutes = seconds / 60;
+                    int remainingSeconds = seconds % 60;
+                    timerLabel.setText(String.format("Timer: %02d:%02d", minutes, remainingSeconds));
                 }
-                timerLabel.setText(String.format("Timer: %02d:%02d", minutes, seconds));
             }
         });
         timer.start();
@@ -148,12 +164,11 @@ public class QuizPanel extends JPanel {
             JRadioButton radioButton = new JRadioButton(option);
             radioButton.addActionListener(e -> {
                 String selectedOption = ((JRadioButton) e.getSource()).getText();
-                userResponses.set(index, selectedOption);
+                userResponses.put(index, selectedOption); // Update user response in the map
                 System.out.println(userResponses);
             });
             optionsPanel.add(radioButton);
             buttonGroup.add(radioButton);
-
         }
         validate();
     }
@@ -175,17 +190,34 @@ public class QuizPanel extends JPanel {
     private void exitQuiz() {
         int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to exit the quiz? You will lose all progress.", "Exit Quiz", JOptionPane.YES_NO_OPTION);
         if (confirm == JOptionPane.YES_OPTION) {
+            submitQuiz();
             localApp.showPanel(new LandingPage(localApp, localBackend));
         }
+    }
+
+    private void submitQuiz() {
+        timer.stop(); // Stop the timer
+        score = 0; // Reset score
+        for (int i = 0; i < questions.size(); i++) {
+            Question question = questions.get(i);
+            String userResponse = userResponses.get(i);
+            if (userResponse != null && userResponse.equals(question.getCorrectAnswer())) {
+                score++;
+            }
+        }
+        // Display score in the score label
+        scoreLabel.setText("Score: " + score);
     }
 
     private class Question {
         private String text;
         private ArrayList<String> options;
+        private String correctAnswer;
 
-        public Question(String text, ArrayList<String> options) {
+        public Question(String text, ArrayList<String> options, String correctAnswer) {
             this.text = text;
             this.options = options;
+            this.correctAnswer = correctAnswer;
         }
 
         public String getText() {
@@ -194,6 +226,10 @@ public class QuizPanel extends JPanel {
 
         public ArrayList<String> getOptions() {
             return options;
+        }
+
+        public String getCorrectAnswer() {
+            return correctAnswer;
         }
     }
 }
