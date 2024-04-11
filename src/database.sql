@@ -68,5 +68,11 @@ CREATE OR REPLACE TRIGGER users_trigger
 BEFORE INSERT ON users
 FOR EACH ROW
 BEGIN
-SELECT user_id_seq.NEXTVAL INTO :NEW.user_id FROM DUAL;
+    IF :NEW.role = 'student' THEN
+        INSERT INTO student (student_id, username)
+        VALUES (:NEW.user_id, :NEW.username);
+    ELSIF :NEW.role = 'teacher' THEN
+        INSERT INTO teacher (teacher_id, username)
+        VALUES (:NEW.user_id, :NEW.username);
+    END IF;
 END;

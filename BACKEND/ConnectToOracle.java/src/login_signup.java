@@ -1,7 +1,6 @@
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 import java.lang.String;
 
 
@@ -183,7 +182,7 @@ public class login_signup {
         return questionsList.toArray();
     }
 
-    private Object[][] viewScores(int studentId) {
+    public Object[][] viewScores(int studentId) {
         List<Object[]> scoresList = new ArrayList<>();
         try {
             String sql = "SELECT quiz_id, score FROM results WHERE student_id = ?";
