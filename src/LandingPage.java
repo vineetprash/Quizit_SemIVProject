@@ -84,13 +84,14 @@ public class LandingPage extends JPanel {
             // uniqueQuizzes = {quizId, quizName}
             uniqueQuizzes = localBackend.getQuizzes();
             for (Object[] quiz : uniqueQuizzes) {
-                int quizId = (int) quiz[0];
+                // int quizId = (int) quiz[0];
                 String quizName = (String) quiz[1];
                 TestPanel testPanel = new TestPanel(quizName, "Subtitle", "Dummy User");
                 testsPanel.add(testPanel);
                 listOfTestPanels.add(testPanel);
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
+            System.out.println("An error occured in fetching tests");
             e.printStackTrace();
         }
 
@@ -142,7 +143,7 @@ public class LandingPage extends JPanel {
                 public void actionPerformed(ActionEvent e) {
                     try {
                         System.out.println("KUCH HUA");
-                        new QuizPanel(localApp, localBackend, testName);
+                        new QuizPanel(localApp, localBackend, "MCQ");
                     } catch (SQLException e1) {
                         e1.printStackTrace();
                     }

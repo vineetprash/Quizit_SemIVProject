@@ -65,8 +65,10 @@ public class QuizPanel extends JPanel {
                             options.add((String) questionData[i]);
                         }
                     }
-                    int correctOption = (int) questionData[6];
+                    System.out.println(questionData[6] + "This is data");
+                    int correctOption = Integer.parseInt((String)questionData[6]);
                     questions.add(new Question(questionText, options, (String) questionData[correctOption + 2]));
+                    System.out.println(correctOption + "this is correct option");
                 }
             }
         }
@@ -233,7 +235,7 @@ public class QuizPanel extends JPanel {
         }
         // Display score in the score label
         // scoreLabel.setText("Score: " + score);
-        localBackend.storeStudentScore(localApp.sessionUser, score, (int)quizDetails[0]);
+        localBackend.storeStudentScore(localApp.sessionUser, score,(int)quizDetails[0]);
     }
 
     private class Question {

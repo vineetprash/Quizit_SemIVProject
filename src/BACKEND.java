@@ -226,17 +226,22 @@ public class BACKEND {
     }
 
 
-    public List<Object[]> getQuizzes() throws SQLException {
+    public List<Object[]> getQuizzes() {
         List<Object[]> quizList = new ArrayList<>();
         String sql = "SELECT DISTINCT quiz_id, quiz_name FROM quizzes";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            ResultSet rs = pstmt.executeQuery();
-            while (rs.next()) {
-                int quizId = rs.getInt("quiz_id");
-                String quizName = rs.getString("quiz_name");
-                Object[] quizDetails = {quizId, quizName};
-                quizList.add(quizDetails);
+        try {
+            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                ResultSet rs = pstmt.executeQuery();
+                while (rs.next()) {
+                    int quizId = rs.getInt("quiz_id");
+                    String quizName = rs.getString("quiz_name");
+                    Object[] quizDetails = {quizId, quizName};
+                    quizList.add(quizDetails);
+                }
             }
+        } catch (SQLException ex) {
+            // Handle the exception or log it
+            ex.printStackTrace();
         }
         return quizList;
     }
