@@ -104,15 +104,18 @@ public class BACKEND {
     }
 
     // Function to add a question to a quiz
-    public void addQuestionToQuiz(int quizId, String questionText, String questionType, String options,
+    public void addQuestionToQuiz(int quizId, String questionText, String questionType, String option1, String option2, String option3, String option4,
             String correctAnswer) throws SQLException {
-        String sql = "INSERT INTO questions(quiz_id, question_text, question_type, options, correct_answer) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO questions(quiz_id, question_text, question_type, option1, option2, option3, option4, correct_answer) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, quizId);
             pstmt.setString(2, questionText);
             pstmt.setString(3, questionType);
-            pstmt.setString(4, options);
-            pstmt.setString(5, correctAnswer);
+            pstmt.setString(4, option1);
+            pstmt.setString(5, option2);
+            pstmt.setString(6, option3);
+            pstmt.setString(7, option4);
+            pstmt.setString(8, correctAnswer);
             pstmt.executeUpdate();
         }
     }
