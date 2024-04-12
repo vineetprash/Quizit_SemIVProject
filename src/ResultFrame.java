@@ -10,6 +10,7 @@ public class ResultFrame extends JFrame {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(400, 300);
         setLocationRelativeTo(null);
+        
 
         if (data == null || data.length == 0) {
             JOptionPane.showMessageDialog(this, "No submissions found", "Info", JOptionPane.INFORMATION_MESSAGE);

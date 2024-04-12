@@ -143,7 +143,7 @@ public class LandingPage extends JPanel {
                 public void actionPerformed(ActionEvent e) {
                     try {
                         System.out.println("KUCH HUA");
-                        new QuizPanel(localApp, localBackend, "MCQ");
+                        new QuizPanel(localApp, localBackend, testName);
                     } catch (SQLException e1) {
                         e1.printStackTrace();
                     }
