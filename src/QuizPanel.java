@@ -65,10 +65,8 @@ public class QuizPanel extends JPanel {
                             options.add((String) questionData[i]);
                         }
                     }
-                    System.out.println(questionData[6] + "This is data");
-                    int correctOption = Integer.parseInt((String)questionData[6]);
-                    questions.add(new Question(questionText, options, (String) questionData[correctOption + 2]));
-                    System.out.println(correctOption + "this is correct option");
+                    questions.add(new Question(questionText, options, (String) questionData[6]));
+                    
                 }
             }
         }
