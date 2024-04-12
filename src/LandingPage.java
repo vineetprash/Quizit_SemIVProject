@@ -104,6 +104,7 @@ public class LandingPage extends JPanel {
         });
 
         viewResultsButton.addActionListener(e -> {
+            System.out.println("BUTTON KIA PRESSS");
             Object[][] data = localBackend.viewScores(localApp.sessionUser);
             new ResultFrame(data);
         });

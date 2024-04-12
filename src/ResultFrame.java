@@ -4,8 +4,11 @@ import java.awt.*;
 
 public class ResultFrame extends JFrame {
     private JTable table;
-
-    public ResultFrame(Object[][] data) {
+    
+    public ResultFrame(Object[][] data) 
+    {
+        setVisible(true);
+        System.out.println("FRAME OPENED");
         setTitle("Results");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(400, 300);

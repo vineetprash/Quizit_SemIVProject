@@ -205,7 +205,7 @@ public class BACKEND {
     public Object[][] viewScores(String username) {
         List<Object[]> scoresList = new ArrayList<>();
         try {
-            String sql = "SELECT quiz_id, quiz_name, score FROM results WHERE username = ?";
+            String sql = "SELECT quiz_id, quiz_name, score FROM results WHERE student_id = ?";
             try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
                 pstmt.setString(1, username);
                 ResultSet rs = pstmt.executeQuery();
