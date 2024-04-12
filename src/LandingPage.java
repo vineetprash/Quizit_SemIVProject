@@ -48,8 +48,9 @@ public class LandingPage extends JPanel {
         newQuizButton.setBackground(accentColor);
         newQuizButton.setForeground(lightColor);
         newQuizButton.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 10));
-        topPanel.add(newQuizButton);
-
+        if (localApp.sessionUserRole.equals("teacher")) {
+            topPanel.add(newQuizButton);
+        }
         viewResultsButton = new JButton("View Results");
         viewResultsButton.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 10));
         viewResultsButton.setBackground(accentColor);
@@ -72,7 +73,7 @@ public class LandingPage extends JPanel {
         mainPanel.add(welcomePanel, BorderLayout.NORTH);
         add(mainPanel, BorderLayout.CENTER);
 
-        welcomeLabel = new JLabel("Welcome, " + localApp.sessionUser + " !");
+        welcomeLabel = new JLabel("Welcome, " + localApp.getSessionUser() + " !");
         welcomeLabel.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 24));
         welcomePanel.add(welcomeLabel, BorderLayout.NORTH);
 

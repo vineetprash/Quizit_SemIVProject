@@ -1,7 +1,12 @@
 import javax.swing.*;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultCaret;
+import javax.swing.text.JTextComponent;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.Rectangle2D;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -20,14 +25,16 @@ public class NewQuizPanel extends JPanel {
     private Color submitColor = Color.WHITE;
     private App localApp;
     private BACKEND localBackend;
-    
+    private int caretWidth = 4;
     
     public NewQuizPanel(App app, BACKEND backend) {
+
         this.localApp = app;
         this.localBackend = backend;
         setLayout(new GridBagLayout());
         setBackground(darkColor);
         setForeground(accentColor);
+  
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.BOTH;
@@ -36,12 +43,14 @@ public class NewQuizPanel extends JPanel {
         // Quiz name field
         JLabel quizNameLabel = new JLabel("Quiz name:");
         quizNameLabel.setForeground(lightColor);
+        
         gbc.gridx = 0;
         gbc.gridy = 0;
         add(quizNameLabel, gbc);
         quizNameField = new JTextField(10);
         quizNameField.setBackground(darkColor);
         quizNameField.setForeground(lightColor);
+        quizNameField.setCaret(new CustomCaret(accentColor, caretWidth));
         gbc.gridx = 1;
         gbc.gridy = 0;
         add(quizNameField, gbc);
@@ -53,6 +62,7 @@ public class NewQuizPanel extends JPanel {
         gbc.gridy = 1;
         add(numOfQuestionsLabel, gbc);
         numOfQuestionsField = new JTextField(10);
+        numOfQuestionsField.setCaret(new CustomCaret(accentColor, caretWidth));
         numOfQuestionsField.setBackground(darkColor);
         numOfQuestionsField.setForeground(lightColor);
         gbc.gridx = 1;
@@ -113,11 +123,6 @@ public class NewQuizPanel extends JPanel {
             tempFrame.setVisible(true);
             tempFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     
-            // Retrieve all fields from the frame
-            // ArrayList<ArrayList<Component>> allFieldsList = (ArrayList<ArrayList<Component>>) tempFrame.getContentPane().getClientProperty("allFieldsList");
-    
-            // Add questions to the quiz in the database
-            // handleSubmit(allFieldsList, quizId);
     
             
         } catch (SQLException ex) {
@@ -150,6 +155,7 @@ public class NewQuizPanel extends JPanel {
             JTextField questionField = new JTextField(30);
             questionField.setForeground(lightColor);
             questionField.setBackground(darkColor);
+            questionField.setCaret(new CustomCaret(accentColor, caretWidth));
             questionFieldsPanel.add(questionField, gbc);
     
             // List to store fields for each question
@@ -168,6 +174,7 @@ public class NewQuizPanel extends JPanel {
                 JTextField optionField = new JTextField(30);
                 optionField.setBackground(darkColor);
                 optionField.setForeground(lightColor);
+                optionField.setCaret(new CustomCaret(accentColor, caretWidth));
                 questionFieldsPanel.add(optionField, gbc);
                 // Add option field to the list of fields for this question
                 questionFieldsList.add(optionField);
@@ -255,9 +262,49 @@ public class NewQuizPanel extends JPanel {
 
     }
     
+}
+
+class CustomCaret extends DefaultCaret {
+
+    private Color caretColor;
+    private int caretWidth;
+
+
+    public CustomCaret(Color caretColor, int caretWidth) {
+        this.caretColor = caretColor;
+        this.caretWidth = caretWidth;
+        setBlinkRate(500);
+    }
+
+    @Override
+    protected synchronized void damage(Rectangle r) {
+        if (r == null) return;
+        JTextComponent comp = getComponent();
+        x = r.x;
+        y = r.y;
+        width = 1;
+        height = r.height;
+        comp.repaint();
+    }
+
+    @Override
+    public void paint(Graphics g) {
+        JTextComponent comp = getComponent();
+        if (comp == null) return;
+
+        int dot = getDot();
+        Rectangle2D r = null;
+        try {
+            r = comp.modelToView2D(dot);
+        } catch (Exception e) {
+            return;
+        }
+        if (r == null) return;
+
+        if (isVisible()) {
+            g.setColor(caretColor);
+            g.fillRect((int) r.getX(), (int) r.getY(), caretWidth, (int) r.getHeight());
+        }
+    }
     
-    
-
-
-
 }
