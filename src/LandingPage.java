@@ -65,7 +65,10 @@ public class LandingPage extends JPanel {
 
         testsPanel = new JPanel(new GridLayout(0, 3, 20, 20));
         testsPanel.setBackground(lightColor);
-        mainPanel.add(testsPanel, BorderLayout.CENTER);
+
+        JScrollPane scrollPane = new JScrollPane(testsPanel);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        mainPanel.add(scrollPane, BorderLayout.CENTER);
 
         JPanel welcomePanel = new JPanel();
         welcomePanel.setBackground(lightColor);

@@ -195,7 +195,7 @@ public class NewQuizPanel extends JPanel {
             allFieldsList.add(questionFieldsList);
     
             gbc.gridy++;
-            gbc.insets = new Insets(20, 0, 20, 0); // Add some space between questions
+            gbc.insets = new Insets(20, 0, 0, 0); // Add some space between questions
         }
     
         gbc.gridy++;
@@ -246,7 +246,12 @@ public class NewQuizPanel extends JPanel {
     
                 // Extract correct answer
                 JComboBox<String> correctAnswerComboBox = (JComboBox<String>) questionFields.get(5);
-                String correctAnswer = (String) correctAnswerComboBox.getSelectedItem();
+                int correctAnswerIndex = correctAnswerComboBox.getSelectedIndex();
+                if (correctAnswerIndex == -1) {
+                    JOptionPane.showMessageDialog(this, "Please fill out all fields", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                String correctAnswer = options.get(correctAnswerIndex);
     
                 // Add the question to the quiz in the database
                 localBackend.addQuestionToQuiz(quizId, questionText, "Type", options.get(0), options.get(1), options.get(2), options.get(3), correctAnswer);
@@ -257,7 +262,7 @@ public class NewQuizPanel extends JPanel {
             JOptionPane.showMessageDialog(this, "Failed to add questions to quiz", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        JOptionPane.showMessageDialog(this, "Quiz created successfully", "Success", JOptionPane.OK_OPTION);
+        JOptionPane.showMessageDialog(this, "Quiz created successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
         new LandingPage(localApp, localBackend);
 
     }
