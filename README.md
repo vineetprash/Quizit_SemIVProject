@@ -1,10 +1,4 @@
-# Quizit_SemIVProject
-Vineet, Sumit and Shivam's PBL-II project for Sem 4
-
-
-
-# Workflow
-
+# Installation
 1. Clone this repo
 ```
 cd somefolder
@@ -12,6 +6,8 @@ git clone https://github.com/vineetprash/Quizit_SemIVProject.git
 cd Quizzit_SemIVProject
 
 ```
-2. dev-Workflow: Open in VSC and install Language support for java extension in VSC and optionally prettier for Java.
+2. To avoid errors related to JDK version, remove all `.class` files, before the first run
+3. Update the sql plus credentials in DATABASE.java and set the ojdbc11.jar file in your classpath. 
+4. Compile and run App.java in an IDE
 
-3. Run App.java in src directory.
+
