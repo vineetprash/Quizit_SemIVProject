@@ -7,9 +7,9 @@ import java.lang.String;
 public class BACKEND {
     private Connection conn;
     // Replace with your database connection details
-    String url = "jdbc:oracle:thin:@LAPTOP-EK807I1M:1521:xe";
-    String username = "system";
-    String password = "SHIVAM";
+    String url = "";
+    String username = "";
+    String password = "";
 
 
     public BACKEND() {
