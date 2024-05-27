@@ -43,22 +43,22 @@ public class BACKEND {
 
     // Function to authenticate user login
     public String[] authenticate(String username, String password) {
-        return new String[]{"1","teacher"};
-        // try {
-        //     PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM users WHERE username = ? AND password = ?");
-        //     pstmt.setString(1, username);
-        //     pstmt.setString(2, password);
-        //     ResultSet rs = pstmt.executeQuery();
-        //     if (rs.next()) {
-        //         String role = rs.getString("role");
-        //         return new String[]{"1", role};
-        //     } else {
-        //         return new String[]{"0", "NA"};
-        //     }
-        // } catch (SQLException e) {
-        //     e.printStackTrace();
-        //     return new String[]{"0", "NA"};
-        // }
+        // return new String[]{"1","teacher"};
+        try {
+            PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM users WHERE username = ? AND password = ?");
+            pstmt.setString(1, username);
+            pstmt.setString(2, password);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                String role = rs.getString("role");
+                return new String[]{"1", role};
+            } else {
+                return new String[]{"0", "NA"};
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return new String[]{"0", "NA"};
+        }
     }
     
     
