@@ -1,12 +1,19 @@
 import javax.swing.*;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultCaret;
+import javax.swing.text.JTextComponent;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.Rectangle2D;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class NewQuizPanel extends JPanel {
     
     private JTextField numOfQuestionsField;
+    private JTextField quizNameField;
     private ArrayList<JTextField> questionFields;
     private ArrayList<ArrayList<JTextField>> optionFields;
     private ArrayList<JComboBox<String>> correctAnswerFields;
@@ -18,31 +25,50 @@ public class NewQuizPanel extends JPanel {
     private Color submitColor = Color.WHITE;
     private App localApp;
     private BACKEND localBackend;
-    
+    private int caretWidth = 4;
     
     public NewQuizPanel(App app, BACKEND backend) {
+
         this.localApp = app;
         this.localBackend = backend;
         setLayout(new GridBagLayout());
         setBackground(darkColor);
         setForeground(accentColor);
+  
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.BOTH;
+
+
+        // Quiz name field
+        JLabel quizNameLabel = new JLabel("Quiz name:");
+        quizNameLabel.setForeground(lightColor);
+        
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        add(quizNameLabel, gbc);
+        quizNameField = new JTextField(10);
+        quizNameField.setBackground(darkColor);
+        quizNameField.setForeground(lightColor);
+        quizNameField.setCaret(new CustomCaret(accentColor, caretWidth));
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        add(quizNameField, gbc);
 
         // Number of questions field
         JLabel numOfQuestionsLabel = new JLabel("Number of Questions:");
         numOfQuestionsLabel.setForeground(lightColor);
         gbc.gridx = 0;
-        gbc.gridy = 0;
+        gbc.gridy = 1;
         add(numOfQuestionsLabel, gbc);
-
         numOfQuestionsField = new JTextField(10);
+        numOfQuestionsField.setCaret(new CustomCaret(accentColor, caretWidth));
         numOfQuestionsField.setBackground(darkColor);
         numOfQuestionsField.setForeground(lightColor);
         gbc.gridx = 1;
-        gbc.gridy = 0;
+        gbc.gridy = 1;
         add(numOfQuestionsField, gbc);
+
 
         // Question fields and option fields
         questionFields = new ArrayList<>();
@@ -64,11 +90,11 @@ public class NewQuizPanel extends JPanel {
         });
         gbc.gridwidth = 2;
         gbc.gridx = 0;
-        gbc.gridy = 1;
+        gbc.gridy = 2;
         gbc.anchor = GridBagConstraints.CENTER;
         add(submitButton, gbc);
         gbc.gridx = 1;
-        gbc.gridy = 2;
+        gbc.gridy = 3;
         gbc.anchor = GridBagConstraints.CENTER;
         add(backButton, gbc);
 
@@ -76,33 +102,37 @@ public class NewQuizPanel extends JPanel {
 	    localApp.showPanel(this);
     }
 
-   private void createQuiz() {
+    private void createQuiz() {
+        String quizName = quizNameField.getText();
         int numOfQuestions = Integer.parseInt(numOfQuestionsField.getText());
-        JFrame tempFrame = addQuestionFields(numOfQuestions, "Building Quiz");
-        tempFrame.setVisible(true);
-        tempFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        // ArrayList<String> questions = new ArrayList<>();
-        // ArrayList<ArrayList<String>> options = new ArrayList<>();
-        // ArrayList<String> correctAnswers = new ArrayList<>();
-        // for (int i = 0; i < numOfQuestions; i++) {
-        //     questions.add(questionFields.get(i).getText());
-        //     ArrayList<String> questionOptions = new ArrayList<>();
-        //     for (JTextField optionField : optionFields.get(i)) {
-        //         questionOptions.add(optionField.getText());
-        //     }
-        //     options.add(questionOptions);
-        //     String correctAnswer = (String) correctAnswerFields.get(i).getSelectedItem();
-        //     correctAnswers.add(correctAnswer);
-        // }
-        // int timeLimit = Integer.parseInt(timeLimitField.getText());
-        // // Do something with the created quiz data
-        // System.out.println("Quiz created with " + numOfQuestions + " questions and a time limit of " + timeLimit + " minutes.");
-        // System.out.println("Questions: " + questions);
-        // System.out.println("Options: " + options);
-        // System.out.println("Correct Answers: " + correctAnswers);
+        int timeLimit = Integer.parseInt(JOptionPane.showInputDialog(this, "Enter Time Limit (in minutes):"));
+        String scoringCriteria = JOptionPane.showInputDialog(this, "Enter Scoring Criteria:");
+        try {
+            // Create the quiz in the database
+            boolean quizCreated = localBackend.createQuizDB(quizName, timeLimit, scoringCriteria);
+            if (!quizCreated) {
+                JOptionPane.showMessageDialog(this, "Failed to create quiz", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+    
+            // Get the ID of the newly created quiz
+            int quizId = localBackend.getQuizId(quizName);
+    
+            // Render the question fields and obtain the frame
+            JFrame tempFrame = renderQuestionFields(numOfQuestions, "Enter question details: ", quizId);
+            tempFrame.setVisible(true);
+            tempFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    
+    
+            
+        } catch (SQLException ex) {
+            ex.printStackTrace(); // Handle the exception properly in your application
+            JOptionPane.showMessageDialog(this, "Failed to create quiz", "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
+    
 
-    private JFrame addQuestionFields(int numOfQuestions, String title) {
+    private JFrame renderQuestionFields(int numOfQuestions, String title, int quizId) {
         JPanel questionFieldsPanel = new JPanel(new GridBagLayout());
         questionFieldsPanel.setBackground(darkColor);
         questionFieldsPanel.setForeground(lightColor);
@@ -113,35 +143,43 @@ public class NewQuizPanel extends JPanel {
         gbc.gridx = 0;
         gbc.gridy = 0;
     
+        // List to store all text fields and option fields for each question
+        ArrayList<ArrayList<Component>> allFieldsList = new ArrayList<>();
+    
         for (int i = 0; i < numOfQuestions; i++) {
             JLabel questionLabel = new JLabel("Question " + (i + 1) + ":");
             questionLabel.setForeground(lightColor);
             questionFieldsPanel.add(questionLabel, gbc);
-
     
             gbc.gridy++;
             JTextField questionField = new JTextField(30);
             questionField.setForeground(lightColor);
             questionField.setBackground(darkColor);
+            questionField.setCaret(new CustomCaret(accentColor, caretWidth));
             questionFieldsPanel.add(questionField, gbc);
+    
+            // List to store fields for each question
+            ArrayList<Component> questionFieldsList = new ArrayList<>();
+            // Add question field to the list of fields for this question
+            questionFieldsList.add(questionField);
     
             gbc.gridy++;
             JLabel optionsLabel = new JLabel("Options:");
             optionsLabel.setForeground(lightColor);
             optionsLabel.setBackground(darkColor);
             questionFieldsPanel.add(optionsLabel, gbc);
-            
     
-            ArrayList<JTextField> optionFieldsList = new ArrayList<>();
             for (int j = 0; j < 4; j++) {
                 gbc.gridy++;
                 JTextField optionField = new JTextField(30);
                 optionField.setBackground(darkColor);
                 optionField.setForeground(lightColor);
+                optionField.setCaret(new CustomCaret(accentColor, caretWidth));
                 questionFieldsPanel.add(optionField, gbc);
-                optionFieldsList.add(optionField);
+                // Add option field to the list of fields for this question
+                questionFieldsList.add(optionField);
             }
-    
+
             gbc.gridy++;
             JLabel correctAnswerLabel = new JLabel("Correct Answer:");
             questionFieldsPanel.add(correctAnswerLabel, gbc);
@@ -150,7 +188,11 @@ public class NewQuizPanel extends JPanel {
             String[] options = {"Option 1", "Option 2", "Option 3", "Option 4"};
             JComboBox<String> correctAnswerComboBox = new JComboBox<>(options);
             questionFieldsPanel.add(correctAnswerComboBox, gbc);
-            correctAnswerFields.add(correctAnswerComboBox);
+            // Add correct answer combo box to the list of fields for this question
+            questionFieldsList.add(correctAnswerComboBox);
+    
+            // Add the list of fields for this question to the list of all fields
+            allFieldsList.add(questionFieldsList);
     
             gbc.gridy++;
             gbc.insets = new Insets(20, 0, 0, 0); // Add some space between questions
@@ -158,27 +200,116 @@ public class NewQuizPanel extends JPanel {
     
         gbc.gridy++;
         gbc.insets = new Insets(5, 5, 5, 5);
-        JLabel timeLimitLabel = new JLabel("Time Limit (in minutes):");
-        questionFieldsPanel.add(timeLimitLabel, gbc);
-    
-        gbc.gridy++;
-        JTextField timeLimitField = new JTextField(10);
-        questionFieldsPanel.add(timeLimitField, gbc);
 
+        JButton submitButton = new JButton("Submit");
+        gbc.gridy++;
+        gbc.gridx = 0;
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
+        questionFieldsPanel.add(submitButton, gbc);
+
+        submitButton.addActionListener(e -> {
+            handleSubmit(allFieldsList, quizId);
+        });
+        
+    
         JScrollPane scrollPane = new JScrollPane(questionFieldsPanel);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-
+    
         JFrame frame = new JFrame(title);
         frame.add(scrollPane);
         frame.setSize(800, 500);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
         frame.pack();
-     
+    
+        // Store the list of all fields in the frame's client properties
+        ((JComponent) frame.getContentPane()).putClientProperty("allFieldsList", allFieldsList);
+    
         return frame;
     }
+
+
+    private void handleSubmit(ArrayList<ArrayList<Component>> allFieldsList, int quizId) {
+        try {
+            for (ArrayList<Component> questionFields : allFieldsList) {
+                // Extract data from the list of fields for each question
+                JTextField questionField = (JTextField) questionFields.get(0);
+                String questionText = questionField.getText();
     
+                // Extract options
+                ArrayList<String> options = new ArrayList<>();
+                for (int i = 1; i <= 4; i++) {
+                    JTextField optionField = (JTextField) questionFields.get(i);
+                    options.add(optionField.getText());
+                }
+    
+                // Extract correct answer
+                JComboBox<String> correctAnswerComboBox = (JComboBox<String>) questionFields.get(5);
+                int correctAnswerIndex = correctAnswerComboBox.getSelectedIndex();
+                if (correctAnswerIndex == -1) {
+                    JOptionPane.showMessageDialog(this, "Please fill out all fields", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                String correctAnswer = options.get(correctAnswerIndex);
+    
+                // Add the question to the quiz in the database
+                localBackend.addQuestionToQuiz(quizId, questionText, "Type", options.get(0), options.get(1), options.get(2), options.get(3), correctAnswer);
+            }
+            JOptionPane.showMessageDialog(this, "Questions added to quiz successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+        } catch (SQLException ex) {
+            ex.printStackTrace(); // Handle the exception properly in your application
+            JOptionPane.showMessageDialog(this, "Failed to add questions to quiz", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        JOptionPane.showMessageDialog(this, "Quiz created successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+        new LandingPage(localApp, localBackend);
+
+    }
+    
+}
+
+class CustomCaret extends DefaultCaret {
+
+    private Color caretColor;
+    private int caretWidth;
 
 
+    public CustomCaret(Color caretColor, int caretWidth) {
+        this.caretColor = caretColor;
+        this.caretWidth = caretWidth;
+        setBlinkRate(500);
+    }
 
+    @Override
+    protected synchronized void damage(Rectangle r) {
+        if (r == null) return;
+        JTextComponent comp = getComponent();
+        x = r.x;
+        y = r.y;
+        width = 1;
+        height = r.height;
+        comp.repaint();
+    }
+
+    @Override
+    public void paint(Graphics g) {
+        JTextComponent comp = getComponent();
+        if (comp == null) return;
+
+        int dot = getDot();
+        Rectangle2D r = null;
+        try {
+            r = comp.modelToView2D(dot);
+        } catch (Exception e) {
+            return;
+        }
+        if (r == null) return;
+
+        if (isVisible()) {
+            g.setColor(caretColor);
+            g.fillRect((int) r.getX(), (int) r.getY(), caretWidth, (int) r.getHeight());
+        }
+    }
+    
 }

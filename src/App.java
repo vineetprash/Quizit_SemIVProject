@@ -4,6 +4,14 @@ import java.awt.*;
 
 public class App extends JFrame {
     public String sessionUser;
+    public String getSessionUser() {
+        return sessionUser;
+    }
+
+    public String sessionUserRole;
+    public String getSessionUserRole() {
+        return sessionUserRole;
+    }
     
     public App() {
         setTitle("Quizit");

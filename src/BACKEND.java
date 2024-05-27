@@ -43,22 +43,22 @@ public class BACKEND {
 
     // Function to authenticate user login
     public String[] authenticate(String username, String password) {
-        return new String[]{"1","teacher"};
-        // try {
-        //     PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM users WHERE username = ? AND password = ?");
-        //     pstmt.setString(1, username);
-        //     pstmt.setString(2, password);
-        //     ResultSet rs = pstmt.executeQuery();
-        //     if (rs.next()) {
-        //         String role = rs.getString("role");
-        //         return new String[]{"1", role};
-        //     } else {
-        //         return new String[]{"0", "NA"};
-        //     }
-        // } catch (SQLException e) {
-        //     e.printStackTrace();
-        //     return new String[]{"0", "NA"};
-        // }
+        // return new String[]{"1","teacher"};
+        try {
+            PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM users WHERE username = ? AND password = ?");
+            pstmt.setString(1, username);
+            pstmt.setString(2, password);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                String role = rs.getString("role");
+                return new String[]{"1", role};
+            } else {
+                return new String[]{"0", "NA"};
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return new String[]{"0", "NA"};
+        }
     }
     
     
@@ -104,15 +104,18 @@ public class BACKEND {
     }
 
     // Function to add a question to a quiz
-    public void addQuestionToQuiz(int quizId, String questionText, String questionType, String options,
+    public void addQuestionToQuiz(int quizId, String questionText, String questionType, String option1, String option2, String option3, String option4,
             String correctAnswer) throws SQLException {
-        String sql = "INSERT INTO questions(quiz_id, question_text, question_type, options, correct_answer) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO questions(quiz_id, question_text, question_type, option1, option2, option3, option4, correct_answer) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, quizId);
             pstmt.setString(2, questionText);
             pstmt.setString(3, questionType);
-            pstmt.setString(4, options);
-            pstmt.setString(5, correctAnswer);
+            pstmt.setString(4, option1);
+            pstmt.setString(5, option2);
+            pstmt.setString(6, option3);
+            pstmt.setString(7, option4);
+            pstmt.setString(8, correctAnswer);
             pstmt.executeUpdate();
         }
     }
